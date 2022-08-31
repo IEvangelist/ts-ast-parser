@@ -6,9 +6,10 @@ namespace Zu.TypeScript.TsParser
     {
         public static INode SkipPartiallyEmittedExpressions(INode node)
         {
-            while (node.Kind == SyntaxKind.PartiallyEmittedExpression)
-                node = ((PartiallyEmittedExpression) node).Expression;
-
+            while (node is { Kind: SyntaxKind.PartiallyEmittedExpression })
+            {
+                node = ((PartiallyEmittedExpression)node).Expression;
+            }
 
             return node;
         }

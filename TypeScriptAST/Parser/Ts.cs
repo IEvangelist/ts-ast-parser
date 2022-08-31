@@ -1,36 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Zu.TypeScript.TsTypes;
+﻿using Zu.TypeScript.TsTypes;
 
 namespace Zu.TypeScript.TsParser
 {
     public class Ts
     {
-        public static INode VisitNode(Func<INode, INode> cbNode, INode node)
-        {
-            if (node != null)
-                return cbNode(node);
-            return null;
-        }
+        public static INode? VisitNode(
+            Func<INode, INode> cbNode, INode? node) =>
+            node != null ? cbNode(node) : null;
 
+        public static T? VisitList<T>(
+            Func<INode[], T> cbNodes, INode[] nodes) =>
+            nodes != null ? cbNodes(nodes) : default;
 
-        public static T VisitList<T>(Func<INode[], T> cbNodes, INode[] nodes)
-        {
-            if (nodes != null)
-                return cbNodes(nodes);
-            return default(T);
-        }
+        public static INode? VisitNodeArray(
+            Func<INode[], INode> cbNodes, INode[] nodes) =>
+            nodes != null ? cbNodes(nodes) : null;
 
-
-        public static INode VisitNodeArray(Func<INode[], INode> cbNodes, INode[] nodes)
-        {
-            if (nodes != null)
-                return cbNodes(nodes);
-            return null;
-        }
-
-        public static INode VisitEachNode(Func<INode, INode> cbNode, List<INode> nodes)
+        public static INode? VisitEachNode(
+            Func<INode, INode> cbNode, List<INode> nodes)
         {
             if (nodes != null)
                 foreach (var node in nodes)
@@ -42,8 +29,8 @@ namespace Zu.TypeScript.TsParser
             return null;
         }
 
-
-        public static INode ForEachChild(INode node, Func<INode, INode> cbNode, Func<INode[], INode> cbNodeArray = null)
+        public static INode? ForEachChild(
+            INode node, Func<INode, INode> cbNode, Func<INode[], INode>? cbNodeArray = null)
         {
             if (node == null)
                 return null;
@@ -51,10 +38,7 @@ namespace Zu.TypeScript.TsParser
             {
                 var list = o2?.Cast<INode>().ToList();
                 if (list != null)
-                    if (cbNodeArray == null)
-                        return VisitEachNode(cbNode, list);
-                    else
-                        return cbNodeArray(list.ToArray());
+                    return cbNodeArray == null ? VisitEachNode(cbNode, list) : cbNodeArray(list.ToArray());
                 return null;
             };
             var cbNodes = cbNodeArray;
@@ -170,7 +154,7 @@ namespace Zu.TypeScript.TsParser
                 case SyntaxKind.ObjectBindingPattern:
                 case SyntaxKind.ArrayBindingPattern:
 
-                    return visitNodes(cbNodes, ((IBindingPattern) node).Elements);
+                    return visitNodes(cbNodes, ((IBindingPattern)node).Elements);
                 case SyntaxKind.ArrayLiteralExpression:
 
                     return visitNodes(cbNodes, (node as ArrayLiteralExpression)?.Elements);
@@ -413,8 +397,9 @@ namespace Zu.TypeScript.TsParser
                 case SyntaxKind.NamedImports:
                 case SyntaxKind.NamedExports:
 
-                    if (node is NamedImports) return visitNodes(cbNodes, (node as NamedImports)?.Elements);
-                    else return visitNodes(cbNodes, (node as NamedExports)?.Elements);
+                    return node is NamedImports
+                        ? visitNodes(cbNodes, (node as NamedImports)?.Elements)
+                        : visitNodes(cbNodes, (node as NamedExports)?.Elements);
                 case SyntaxKind.ExportDeclaration:
 
                     return visitNodes(cbNodes, node.Decorators) ??

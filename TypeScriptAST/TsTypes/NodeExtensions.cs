@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Zu.TypeScript.TsTypes
+﻿namespace Zu.TypeScript.TsTypes
 {
     public static class NodeExtensions
     {
@@ -9,8 +7,8 @@ namespace Zu.TypeScript.TsTypes
             if (includeSelf) yield return node;
 
             foreach (var descendant in node.Children)
-            foreach (var ch in descendant.GetDescendants())
-                yield return ch;
+                foreach (var ch in descendant.GetDescendants())
+                    yield return ch;
         }
 
         public static IEnumerable<INode> GetAncestors(this INode node)

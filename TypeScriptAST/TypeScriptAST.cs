@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Zu.TypeScript.TsParser;
+﻿using Zu.TypeScript.TsParser;
 using Zu.TypeScript.TsTypes;
 
 namespace Zu.TypeScript
@@ -15,13 +12,13 @@ namespace Zu.TypeScript
         IEnumerable<Node> GetDescendants();
         void MakeAST(string source, string fileName = "fileName.ts", bool setChildren = true);
     }
-    public class TypeScriptAST: ITypeScriptAST
+    public class TypeScriptAST : ITypeScriptAST
     {
         public ScriptTarget ScriptTarget { get; set; } = ScriptTarget.Latest; //ES6
         public string SourceStr { get; set; }
         public Node RootNode { get; set; }
 
-        public TypeScriptAST(string source = null, string fileName = "fileName.ts", bool setChildren = true)
+        public TypeScriptAST(string? source = null, string fileName = "fileName.ts", bool setChildren = true)
         {
             if (source != null)
             {

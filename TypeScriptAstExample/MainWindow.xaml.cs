@@ -14,7 +14,7 @@ namespace TypeScriptAstExample
     public partial class MainWindow : Window
     {
         private readonly ObservableCollection<NodeChangeItem> _nodeChangeItems =
-            new ObservableCollection<NodeChangeItem>();
+            new();
 
         private TypeScriptAST _currentAst;
         private ChangeAST _currentChangeAst;
@@ -43,8 +43,7 @@ namespace TypeScriptAstExample
 
         private void lbNodes_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var node = lbNodes.SelectedItem as Node;
-            if (node != null)
+            if (lbNodes.SelectedItem is Node node)
             {
                 tbNodeText.Text = node.GetTextWithComments();
                 tbTreeString.Text = node.GetTreeString();
@@ -58,8 +57,7 @@ namespace TypeScriptAstExample
 
         private void Button_Click_4(object sender, RoutedEventArgs e)
         {
-            var node = lbNodes.SelectedItem as Node;
-            if (node != null)
+            if (lbNodes.SelectedItem is Node node)
                 try
                 {
                     if (_currentChangeAst == null) _currentChangeAst = new ChangeAST(_nodeChangeItems);
@@ -73,8 +71,7 @@ namespace TypeScriptAstExample
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
-            var node = lbNodes.SelectedItem as Node;
-            if (node != null)
+            if (lbNodes.SelectedItem is Node node)
                 try
                 {
                     if (_currentChangeAst == null) _currentChangeAst = new ChangeAST(_nodeChangeItems);
@@ -88,8 +85,7 @@ namespace TypeScriptAstExample
 
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
-            var node = lbNodes.SelectedItem as Node;
-            if (node != null)
+            if (lbNodes.SelectedItem is Node node)
                 try
                 {
                     if (_currentChangeAst == null) _currentChangeAst = new ChangeAST(_nodeChangeItems);
@@ -103,8 +99,7 @@ namespace TypeScriptAstExample
 
         private void Button_Click_6(object sender, RoutedEventArgs e)
         {
-            var node = lbNodes.SelectedItem as Node;
-            if (node != null)
+            if (lbNodes.SelectedItem is Node node)
                 try
                 {
                     if (_currentChangeAst == null) _currentChangeAst = new ChangeAST(_nodeChangeItems);
@@ -145,8 +140,7 @@ namespace TypeScriptAstExample
 
         private void lbChanges_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var ch = lbChanges.SelectedItem as NodeChangeItem;
-            if (ch == null) return;
+            if (lbChanges.SelectedItem is not NodeChangeItem ch) return;
             for (var i = 0; i < lbNodes.Items.Count; i++)
                 if (lbNodes.Items[i] as Node == ch.Node)
                 {
@@ -181,9 +175,7 @@ namespace TypeScriptAstExample
                 var enums = module.Body.Children.OfType<EnumDeclaration>();
                 var moduleInfoFunc = $@"
     export function getModuleInfo() {{
-        return ""Module {module.IdentifierStr} contains {funcs.Count()} functions ({
-                        funcs.Count(v => v.IdentifierStr.StartsWith("parse"))
-                    } starts with parse), {enums.Count()} enums ..."";
+        return ""Module {module.IdentifierStr} contains {funcs.Count()} functions ({funcs.Count(v => v.IdentifierStr.StartsWith("parse"))} starts with parse), {enums.Count()} enums ..."";
     }}
 ";
                 change.InsertBefore(module.Body.Children.First(), moduleInfoFunc);

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using Zu.TypeScript.TsTypes;
 
 namespace Zu.TypeScript.Change
@@ -10,7 +7,7 @@ namespace Zu.TypeScript.Change
     {
         private readonly ICollection<NodeChangeItem> _nodeChangeItems;
 
-        public ChangeAST(ICollection<NodeChangeItem> changeItems = null)
+        public ChangeAST(ICollection<NodeChangeItem>? changeItems = null)
         {
             _nodeChangeItems = changeItems ?? new List<NodeChangeItem>();
         }
@@ -26,30 +23,30 @@ namespace Zu.TypeScript.Change
                 switch (ch.ChangeType)
                 {
                     case NodeChangeType.InsertBefore:
-                        if (ch.Node.Pos > pos) sb.Append(source.Substring(pos, (int) ch.Node.Pos - pos));
+                        if (ch.Node.Pos > pos) sb.Append(source[pos..(int)ch.Node.Pos]);
                         sb.Append(ch.NewValue);
-                        pos = (int) ch.Node.Pos;
+                        pos = (int)ch.Node.Pos;
                         break;
                     case NodeChangeType.Change:
-                        if (ch.Node.Pos > pos) sb.Append(source.Substring(pos, (int) ch.Node.Pos - pos));
+                        if (ch.Node.Pos > pos) sb.Append(source[pos..(int)ch.Node.Pos]);
                         sb.Append(ch.NewValue);
-                        if (ch.Node.End != null) pos = (int) ch.Node.End;
+                        if (ch.Node.End != null) pos = (int)ch.Node.End;
                         else throw new NullReferenceException("Node.End");
                         break;
                     case NodeChangeType.Delete:
-                        if (ch.Node.Pos > pos) sb.Append(source.Substring(pos, (int) ch.Node.Pos - pos));
-                        if (ch.Node.End != null) pos = (int) ch.Node.End + 1;
+                        if (ch.Node.Pos > pos) sb.Append(source[pos..(int)ch.Node.Pos]);
+                        if (ch.Node.End != null) pos = (int)ch.Node.End + 1;
                         break;
                     case NodeChangeType.InsertAfter:
-                        if (ch.Node.End > pos) sb.Append(source.Substring(pos, (int) ch.Node.End - pos));
+                        if (ch.Node.End > pos) sb.Append(source[pos..(int)ch.Node.End]);
                         sb.Append(ch.NewValue);
-                        if (ch.Node.End != null) pos = (int) ch.Node.End;
+                        if (ch.Node.End != null) pos = (int)ch.Node.End;
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
             }
-            if (pos < source.Length) sb.Append(source.Substring(pos));
+            if (pos < source.Length) sb.Append(source[pos..]);
             var newSource = sb.ToString();
 
             return newSource;
@@ -71,7 +68,7 @@ namespace Zu.TypeScript.Change
 
             if (newValue != node.GetTextWithComments())
             {
-                var nodeCh = new NodeChangeItem {ChangeType = NodeChangeType.Change, Node = node, NewValue = newValue};
+                var nodeCh = new NodeChangeItem { ChangeType = NodeChangeType.Change, Node = node, NewValue = newValue };
                 _nodeChangeItems.Add(nodeCh);
             }
             else
@@ -121,7 +118,7 @@ namespace Zu.TypeScript.Change
                 if (_nodeChangeItems.Any(v => v.Node.Pos < node.Pos && v.Node.End > node.Pos))
                     throw new Exception("ChangeItems already have node that contains this node. Delete first");
 
-                var nodeCh = new NodeChangeItem {ChangeType = NodeChangeType.Delete, Node = node};
+                var nodeCh = new NodeChangeItem { ChangeType = NodeChangeType.Delete, Node = node };
                 _nodeChangeItems.Add(nodeCh);
             }
         }

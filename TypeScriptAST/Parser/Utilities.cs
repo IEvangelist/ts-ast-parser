@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Zu.TypeScript.TsTypes;
+﻿using Zu.TypeScript.TsTypes;
 using static Zu.TypeScript.TsParser.Factory;
 using static Zu.TypeScript.TsParser.Scanner;
 using static Zu.TypeScript.TsParser.Ts;
@@ -15,7 +13,7 @@ namespace Zu.TypeScript.TsParser
         }
 
 
-        public static INode ContainsParseError(INode node)
+        public static INode? ContainsParseError(INode node)
         {
             AggregateChildData(node);
 
@@ -40,28 +38,20 @@ namespace Zu.TypeScript.TsParser
 
         public static bool NodeIsMissing(INode node)
         {
-            if (node == null)
-                return true;
-
-
-            return node.Pos == node.End && node.Pos >= 0 && node.Kind != SyntaxKind.EndOfFileToken;
+            return node == null ? true : node.Pos == node.End && node.Pos >= 0 && node.Kind != SyntaxKind.EndOfFileToken;
         }
 
 
         public static string GetTextOfNodeFromSourceText(string sourceText, INode node)
         {
-            if (NodeIsMissing(node))
-                return "";
-
-
-            return sourceText.substring(SkipTriviaM(sourceText, node.Pos ?? 0), node.End);
+            return NodeIsMissing(node) ? "" : sourceText.substring(SkipTriviaM(sourceText, node.Pos ?? 0), node.End);
         }
 
 
         public static string EscapeIdentifier(string identifier)
         {
-            return identifier.Length >= 2 && identifier.charCodeAt(0) == (int) CharacterCodes._ &&
-                   identifier.charCodeAt(1) == (int) CharacterCodes._
+            return identifier.Length >= 2 && identifier.charCodeAt(0) == (int)CharacterCodes._ &&
+                   identifier.charCodeAt(1) == (int)CharacterCodes._
                 ? "_" + identifier
                 : identifier;
         }
@@ -83,9 +73,9 @@ namespace Zu.TypeScript.TsParser
                 : GetLeadingCommentRangesOfNodeFromText(node, text);
             if (commentRanges == null) commentRanges = new List<CommentRange>();
             return commentRanges.Where(comment =>
-                    text.charCodeAt((comment.Pos ?? 0) + 1) == (int) CharacterCodes.Asterisk &&
-                    text.charCodeAt((comment.Pos ?? 0) + 2) == (int) CharacterCodes.Asterisk &&
-                    text.charCodeAt((comment.Pos ?? 0) + 3) != (int) CharacterCodes.Slash)
+                    text.charCodeAt((comment.Pos ?? 0) + 1) == (int)CharacterCodes.Asterisk &&
+                    text.charCodeAt((comment.Pos ?? 0) + 2) == (int)CharacterCodes.Asterisk &&
+                    text.charCodeAt((comment.Pos ?? 0) + 3) != (int)CharacterCodes.Slash)
                 .ToList();
         }
 
@@ -162,8 +152,8 @@ namespace Zu.TypeScript.TsParser
             if (node.Modifiers != null)
                 foreach (var modifier in node.Modifiers)
                     flags |= ModifierToFlag(modifier.Kind);
-            if (node.Flags.HasFlag(NodeFlags.NestedNamespace) || node.Kind == SyntaxKind.Identifier &&
-                ((Identifier) node).IsInJsDocNamespace)
+            if (node.Flags.HasFlag(NodeFlags.NestedNamespace) || (node.Kind == SyntaxKind.Identifier &&
+                ((Identifier)node).IsInJsDocNamespace))
                 flags |= ModifierFlags.Export;
 
 

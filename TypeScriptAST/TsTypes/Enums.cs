@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Zu.TypeScript.TsTypes
+﻿namespace Zu.TypeScript.TsTypes
 {
     [Flags]
     public enum NodeFlags

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using Zu.TypeScript.TsParser;
 
 namespace Zu.TypeScript.TsTypes
@@ -17,7 +14,7 @@ namespace Zu.TypeScript.TsTypes
             set => Ast.SourceStr = value;
         }
 
-        public string IdentifierStr => Kind == SyntaxKind.Identifier
+        public string? IdentifierStr => Kind == SyntaxKind.Identifier
             ? GetText()
             : Children.FirstOrDefault(v => v.Kind == SyntaxKind.Identifier)?.GetText().Trim();
 
@@ -66,23 +63,19 @@ namespace Zu.TypeScript.TsTypes
             });
         }
 
-        public string GetText(string source = null)
+        public string? GetText(string? source = null)
         {
             if (source == null) source = SourceStr;
             if (NodeStart == -1)
-                if (Pos != null && End != null) return source.Substring((int)Pos, (int)End - (int)Pos);
-                else return null;
+                return Pos != null && End != null ? source[(int)Pos..(int)End] : null;
 
-            if (End != null) return source.Substring(NodeStart, (int)End - NodeStart);
-            return null;
+            return End != null ? source[NodeStart..(int)End] : null;
         }
 
-        public string GetTextWithComments(string source = null)
+        public string? GetTextWithComments(string? source = null)
         {
             if (source == null) source = SourceStr;
-            if (Pos != null && End != null)
-                return source.Substring((int)Pos, (int)End - (int)Pos);
-            return null;
+            return Pos != null && End != null ? source[(int)Pos..(int)End] : null;
         }
 
         public override string ToString()
@@ -125,7 +118,7 @@ namespace Zu.TypeScript.TsTypes
             foreach (var node in descendants)
             {
                 //var anc = node.GetAncestors().ToList();
-                for (int i = 1; i < node.Depth; i++) //anc.Count()
+                for (var i = 1; i < node.Depth; i++) //anc.Count()
                 {
                     sb.Append("  ");
                 }
@@ -166,8 +159,8 @@ namespace Zu.TypeScript.TsTypes
         TypeMapper ContextualMapper { get; set; }
         int TagInt { get; set; }
 
-        string GetText(string source = null);
-        string GetTextWithComments(string source = null);
+        string GetText(string? source = null);
+        string GetTextWithComments(string? source = null);
         string GetTreeString(bool withPos = true);
 
         string ToString(bool withPos);

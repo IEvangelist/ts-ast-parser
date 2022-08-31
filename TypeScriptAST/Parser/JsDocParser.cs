@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Zu.TypeScript.TsTypes;
+﻿using Zu.TypeScript.TsTypes;
 using static Zu.TypeScript.TsParser.Scanner;
 
 namespace Zu.TypeScript.TsParser
@@ -11,7 +8,7 @@ namespace Zu.TypeScript.TsParser
         public Parser Parser { get; set; }
         public JsDocParser(Parser parser)
         {
-            this.Parser = parser;
+            Parser = parser;
         }
 
         private Scanner Scanner => Parser.Scanner;
@@ -23,16 +20,16 @@ namespace Zu.TypeScript.TsParser
 
         private void ClearState() => Parser.ClearState();
         private void FixupParentReferences(INode rootNode) => Parser.FixupParentReferences(rootNode);
-        private void ParseErrorAtCurrentToken(DiagnosticMessage message, object arg0 = null) => Parser.ParseErrorAtCurrentToken(message, arg0);
-        private void ParseErrorAtPosition(int start, int length, DiagnosticMessage message, object arg0 = null) => Parser.ParseErrorAtPosition(start, length, message, arg0);
+        private void ParseErrorAtCurrentToken(DiagnosticMessage message, object? arg0 = null) => Parser.ParseErrorAtCurrentToken(message, arg0);
+        private void ParseErrorAtPosition(int start, int length, DiagnosticMessage message, object? arg0 = null) => Parser.ParseErrorAtPosition(start, length, message, arg0);
         private SyntaxKind Token() => Parser.Token();
         private SyntaxKind NextToken() => Parser.NextToken();
         private T TryParse<T>(Func<T> callback) => Parser.TryParse<T>(callback);
-        private bool ParseExpected(SyntaxKind kind, DiagnosticMessage diagnosticMessage = null, bool shouldAdvance = true) => Parser.ParseExpected(kind, diagnosticMessage, shouldAdvance);
+        private bool ParseExpected(SyntaxKind kind, DiagnosticMessage? diagnosticMessage = null, bool shouldAdvance = true) => Parser.ParseExpected(kind, diagnosticMessage, shouldAdvance);
         private bool ParseOptional(SyntaxKind t) => Parser.ParseOptional(t);
         private INode ParseOptionalToken<T>(SyntaxKind t) where T : Node => Parser.ParseOptionalToken<T>(t);
         private T ParseTokenNode<T>() where T : Node => Parser.ParseTokenNode<T>(Token());
-        private NodeArray<T> CreateList<T>(T[] elements = null, int? pos = null)      => Parser.CreateList<T>(elements, pos);
+        private NodeArray<T> CreateList<T>(T[]? elements = null, int? pos = null) => Parser.CreateList<T>(elements, pos);
         private T FinishNode<T>(T node, int? end = null) where T : Node => Parser.FinishNode<T>(node, end);
         private Identifier ParseIdentifierName() => Parser.ParseIdentifierName();
         private NodeArray<T> ParseDelimitedList<T>(ParsingContext kind, Func<T> parseElement, bool? considerSemicolonAsDelimiter = null) where T : INode => Parser.ParseDelimitedList<T>(kind, parseElement, considerSemicolonAsDelimiter);
@@ -66,7 +63,7 @@ namespace Zu.TypeScript.TsParser
         public static (JsDocTypeExpression res, List<Diagnostic> diagnostics) ParseJsDocTypeExpressionForTests(string content, int? start, int? length)
         {
             var dp = new JsDocParser(new Parser());
-            dp.Parser.InitializeState(content, ScriptTarget.Latest,  null, ScriptKind.Js);
+            dp.Parser.InitializeState(content, ScriptTarget.Latest, null, ScriptKind.Js);
 
             var sourceFile = dp.Parser.CreateSourceFile("file.js", ScriptTarget.Latest, ScriptKind.Js);
 
@@ -79,7 +76,7 @@ namespace Zu.TypeScript.TsParser
             dp.Parser.ClearState();
 
 
-            return (jsDocTypeExpression, diagnostics);         
+            return (jsDocTypeExpression, diagnostics);
         }
 
 
@@ -106,7 +103,7 @@ namespace Zu.TypeScript.TsParser
             var type = ParseJsDocType();
             if (Token() == SyntaxKind.BarToken)
             {
-                var unionType = new JsDocUnionType {Types = ParseJsDocTypeList(type)};
+                var unionType = new JsDocUnionType { Types = ParseJsDocTypeList(type) };
 
 
                 type = FinishNode(unionType);
@@ -134,7 +131,7 @@ namespace Zu.TypeScript.TsParser
             {
                 if (Token() == SyntaxKind.OpenBracketToken)
                 {
-                    var arrayType = new JsDocArrayType {ElementType = type};
+                    var arrayType = new JsDocArrayType { ElementType = type };
 
 
 
@@ -148,7 +145,7 @@ namespace Zu.TypeScript.TsParser
                 else
             if (Token() == SyntaxKind.QuestionToken)
                 {
-                    var nullableType = new JsDocNullableType {Type = type};
+                    var nullableType = new JsDocNullableType { Type = type };
 
 
 
@@ -159,7 +156,7 @@ namespace Zu.TypeScript.TsParser
                 else
             if (Token() == SyntaxKind.ExclamationToken)
                 {
-                    var nonNullableType = new JsDocNonNullableType {Type = type};
+                    var nonNullableType = new JsDocNonNullableType { Type = type };
 
 
 
@@ -307,12 +304,12 @@ namespace Zu.TypeScript.TsParser
 
         public ParameterDeclaration ParseJsDocParameter()
         {
-            var parameter = new ParameterDeclaration {Type = ParseJsDocType()};
+            var parameter = new ParameterDeclaration { Type = ParseJsDocType() };
 
             if (ParseOptional(SyntaxKind.EqualsToken))
             {
 
-                parameter.QuestionToken = new QuestionToken { }; 
+                parameter.QuestionToken = new QuestionToken { };
             }
 
             return FinishNode(parameter);
@@ -321,7 +318,7 @@ namespace Zu.TypeScript.TsParser
 
         public JsDocTypeReference ParseJsDocTypeReference()
         {
-            var result = new JsDocTypeReference {Name = Parser.ParseSimplePropertyName() as Identifier};
+            var result = new JsDocTypeReference { Name = Parser.ParseSimplePropertyName() as Identifier };
 
             if (Token() == SyntaxKind.LessThanToken)
             {
@@ -399,7 +396,7 @@ namespace Zu.TypeScript.TsParser
 
         public JsDocRecordType ParseJsDocRecordType()
         {
-            var result = new JsDocRecordType {Literal = ParseTypeLiteral()};
+            var result = new JsDocRecordType { Literal = ParseTypeLiteral() };
 
 
             return FinishNode(result);
@@ -465,7 +462,7 @@ namespace Zu.TypeScript.TsParser
         public NodeArray<IJsDocType> ParseJsDocTypeList(IJsDocType firstType)
         {
 
-            var types = Parser.CreateList<IJsDocType>();  
+            var types = Parser.CreateList<IJsDocType>();
             types.Add(firstType);
             types.Pos = firstType.Pos;
             while (ParseOptional(SyntaxKind.BarToken))
@@ -493,14 +490,14 @@ namespace Zu.TypeScript.TsParser
 
         public JsDocLiteralType ParseJsDocLiteralType()
         {
-            var result = new JsDocLiteralType {Literal = Parser.ParseLiteralTypeNode()};
+            var result = new JsDocLiteralType { Literal = Parser.ParseLiteralTypeNode() };
 
 
             return FinishNode(result);
         }
 
 
-        public   JsDocType ParseJsDocUnknownOrNullableType()
+        public JsDocType ParseJsDocUnknownOrNullableType()
         {
             var pos = Scanner.GetStartPos();
 
@@ -518,7 +515,7 @@ namespace Zu.TypeScript.TsParser
             }
             else
             {
-                var result = new JsDocNullableType {Type = ParseJsDocType()};
+                var result = new JsDocNullableType { Type = ParseJsDocType() };
 
 
                 return FinishNode(result);
@@ -526,10 +523,10 @@ namespace Zu.TypeScript.TsParser
         }
 
 
-        public Tuple<JsDoc, List<Diagnostic>> ParseIsolatedJsDocComment(string content, int start, int length)
+        public Tuple<JsDoc, List<Diagnostic>>? ParseIsolatedJsDocComment(string content, int start, int length)
         {
             if (Parser == null) Parser = new Parser();
-            Parser.InitializeState(content, ScriptTarget.Latest,  null, ScriptKind.Js);
+            Parser.InitializeState(content, ScriptTarget.Latest, null, ScriptKind.Js);
 
             Parser.SourceFile = new SourceFile { LanguageVariant = LanguageVariant.Standard, Text = content };
             var jsDoc = ParseJsDocCommentWorker(start, length);
@@ -575,14 +572,8 @@ namespace Zu.TypeScript.TsParser
 
             length = end - start;
 
-
-            Debug.Assert(start >= 0);
-
-            Debug.Assert(start <= end);
-
-            Debug.Assert(end <= content.Length);
-            NodeArray<IJsDocTag> tags = new NodeArray<IJsDocTag>();
-            List<string> comments = new List<string>();
+            NodeArray<IJsDocTag> tags = new();
+            List<string> comments = new();
             JsDoc result = null;
             if (!IsJsDocStart(content, (int)start))
             {
@@ -748,7 +739,7 @@ namespace Zu.TypeScript.TsParser
                 while (comments3.Any() && (comments3[0] == "\n" || comments3[0] == "\r"))
                 {
 
-                    comments3 = comments3.Skip(1).ToList();  
+                    comments3 = comments3.Skip(1).ToList();
                 }
             }
 
@@ -799,10 +790,7 @@ namespace Zu.TypeScript.TsParser
 
             void ParseTag(int indent)
             {
-
-                Debug.Assert(Token() == SyntaxKind.AtToken);
-                var atToken = new AtToken {End = Scanner.GetTextPos()};
-
+                var atToken = new AtToken { End = Scanner.GetTextPos() };
 
                 NextJsDocToken();
                 var tagName = ParseJsDocIdentifierName();
@@ -873,7 +861,7 @@ namespace Zu.TypeScript.TsParser
 
             List<string> ParseTagComments(int indent)
             {
-                List<string> comments2 = new List<string>();
+                List<string> comments2 = new();
                 var state = JSDocState.SawAsterisk;
                 int? margin = null;
                 while (Token() != SyntaxKind.AtToken && Token() != SyntaxKind.EndOfFileToken)
@@ -927,7 +915,7 @@ namespace Zu.TypeScript.TsParser
                             goto caseLabel5;
                         default:
 
-                            caseLabel5: state = JSDocState.SavingComments;
+caseLabel5: state = JSDocState.SavingComments;
                             PushComment(Scanner.GetTokenText());
 
                             break;
@@ -1006,23 +994,18 @@ namespace Zu.TypeScript.TsParser
                 return TryParse(() =>
                 {
                     SkipWhitespace();
-                    if (Token() != SyntaxKind.OpenBraceToken)
-                    {
-                        return null;
-                    }
-
-                    return ParseJsDocTypeExpression();
+                    return Token() != SyntaxKind.OpenBraceToken ? null : ParseJsDocTypeExpression();
                 });
             }
 
 
-            JsDocParameterTag ParseParamTag(AtToken atToken, Identifier tagName)
+            JsDocParameterTag? ParseParamTag(AtToken atToken, Identifier tagName)
             {
                 var typeExpression = TryParseTypeExpression();
 
                 SkipWhitespace();
                 Identifier name = null;
-                bool isBracketed = false;
+                var isBracketed = false;
                 if ((OpenBracketToken)ParseOptionalToken<OpenBracketToken>(SyntaxKind.OpenBracketToken) != null)
                 {
 
@@ -1134,7 +1117,7 @@ namespace Zu.TypeScript.TsParser
             }
 
 
-            JsDocPropertyTag ParsePropertyTag(AtToken atToken, Identifier tagName)
+            JsDocPropertyTag? ParsePropertyTag(AtToken atToken, Identifier tagName)
             {
                 var typeExpression = TryParseTypeExpression();
 
@@ -1145,7 +1128,7 @@ namespace Zu.TypeScript.TsParser
                 if (name == null)
                 {
 
-                    ParseErrorAtPosition(Scanner.GetStartPos(),  0, Diagnostics.Identifier_expected);
+                    ParseErrorAtPosition(Scanner.GetStartPos(), 0, Diagnostics.Identifier_expected);
 
                     return null;
                 }
@@ -1201,10 +1184,10 @@ namespace Zu.TypeScript.TsParser
                     var rightNode = typedefTag.FullName;
                     while (true)
                     {
-                        if ((SyntaxKind)rightNode.Kind == SyntaxKind.Identifier || (rightNode as JsDocNamespaceDeclaration)?.Body == null)
+                        if (rightNode.Kind == SyntaxKind.Identifier || (rightNode as JsDocNamespaceDeclaration)?.Body == null)
                         {
 
-                            typedefTag.Name = (SyntaxKind)rightNode.Kind == SyntaxKind.Identifier ? rightNode : (rightNode as JsDocTypedefTag)?.Name;
+                            typedefTag.Name = rightNode.Kind == SyntaxKind.Identifier ? rightNode : (rightNode as JsDocTypedefTag)?.Name;
 
                             break;
                         }
@@ -1218,12 +1201,12 @@ namespace Zu.TypeScript.TsParser
                 SkipWhitespace();
                 if (typeExpression != null)
                 {
-                    if ((SyntaxKind)typeExpression.Type.Kind == SyntaxKind.JsDocTypeReference)
+                    if (typeExpression.Type.Kind == SyntaxKind.JsDocTypeReference)
                     {
                         var jsDocTypeReference = (JsDocTypeReference)typeExpression.Type;
-                        if ((SyntaxKind)jsDocTypeReference.Name.Kind == SyntaxKind.Identifier)
+                        if (jsDocTypeReference.Name.Kind == SyntaxKind.Identifier)
                         {
-                            Identifier name = jsDocTypeReference.Name as Identifier;
+                            var name = jsDocTypeReference.Name as Identifier;
                             if (name?.Text == "Object")
                             {
 
@@ -1300,7 +1283,7 @@ namespace Zu.TypeScript.TsParser
                             canParseTag = false;
                             goto caseLabel5;
                         case SyntaxKind.EndOfFileToken:
-                            caseLabel5:
+caseLabel5:
                             break;
                     }
                 }
@@ -1339,10 +1322,7 @@ namespace Zu.TypeScript.TsParser
 
             bool TryParseChildTag(JsDocTypeLiteral parentTag)
             {
-
-                Debug.Assert(Token() == SyntaxKind.AtToken);
-                var atToken = new AtToken {End = Scanner.GetTextPos()};
-
+                var atToken = new AtToken { End = Scanner.GetTextPos() };
 
                 NextJsDocToken();
                 var tagName = ParseJsDocIdentifierName();
@@ -1388,7 +1368,7 @@ namespace Zu.TypeScript.TsParser
             }
 
 
-            JsDocTemplateTag ParseTemplateTag(AtToken atToken, Identifier tagName)
+            JsDocTemplateTag? ParseTemplateTag(AtToken atToken, Identifier tagName)
             {
                 if (tags.Any(t => t.Kind == SyntaxKind.JsDocTemplateTag))
                 {
@@ -1403,12 +1383,11 @@ namespace Zu.TypeScript.TsParser
                     SkipWhitespace();
                     if (name == null)
                     {
-
                         ParseErrorAtPosition(Scanner.GetStartPos(), 0, Diagnostics.Identifier_expected);
 
                         return null;
                     }
-                    var typeParameter = new TypeParameterDeclaration {Name = name};
+                    var typeParameter = new TypeParameterDeclaration { Name = name };
 
 
                     FinishNode(typeParameter);
@@ -1460,7 +1439,7 @@ namespace Zu.TypeScript.TsParser
             }
 
 
-            Identifier CreateJsDocIdentifier(bool isIdentifier)
+            Identifier? CreateJsDocIdentifier(bool isIdentifier)
             {
                 if (!isIdentifier)
                 {
@@ -1471,7 +1450,7 @@ namespace Zu.TypeScript.TsParser
                 }
                 var pos = Scanner.GetTokenPos();
                 var end2 = Scanner.GetTextPos();
-                var result9 = new Identifier {Text = content.substring(pos, end2)};
+                var result9 = new Identifier { Text = content.substring(pos, end2) };
 
 
                 FinishNode(result9, end2);

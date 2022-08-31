@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using CommentKind = Zu.TypeScript.TsTypes.SyntaxKind;
+﻿using CommentKind = Zu.TypeScript.TsTypes.SyntaxKind;
 
 namespace Zu.TypeScript.TsTypes
 {
